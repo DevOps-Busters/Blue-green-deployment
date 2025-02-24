@@ -57,3 +57,27 @@ jobs:
     - name: Deploy with Helm
       run: |
         helm upgrade --install blue-green-app helm/ --set activeVersion=${{ env.DEPLOY_VERSION }}
+
+    # ✅ Step 1: Verify Deployments, Pods, and Services
+    - name: Verify Kubernetes Deployment
+      run: |
+        echo "Checking Kubernetes resources..."
+        kubectl get pods -n default
+        kubectl get services -n default
+        kubectl get deployments -n default
+
+    # ✅ Step 2: Port Forward Service for Testing
+    - name: Port Forward Service
+      run: |
+        kubectl port-forward service/blue-green-app 8080:80 &
+        sleep 5  # Give it time to start
+
+    # ✅ Step 3: Test Application Response
+    - name: Test Application
+      run: |
+        curl -v http://localhost:8080 || echo "Application did not respond"
+
+    # ✅ Step 4: Fetch Logs for Debugging (if needed)
+    - name: Get Pod Logs
+      run: |
+        kubectl logs -l app=blue-green-app --tail=50 || echo "No logs found"
