@@ -1,0 +1,11 @@
+replicaCount: 2
+image:
+  repository: apoorv0001/app
+  tag: blue
+service:
+  type: ClusterIP
+  port: 3000
+ingress:
+  enabled: true
+  host: myapp.local
+activeVersion: blue
